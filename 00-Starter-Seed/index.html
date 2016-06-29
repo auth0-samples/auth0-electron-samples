@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Auth0 Electron</title>
+  </head>
+  <body>
+    
+    <h1>Auth0 Electron</h1>
+    
+    <button id="login">Login</button>
+    <button id="logout">Logout</button>
+    
+    <div id="profile">
+      <img id="avatar" style="width: 75px;border-radius:50%">
+      <h3 id="name"></h3>
+      <h3 id="email"></h3>
+    </div>
+
+    <script src="https://cdn.auth0.com/js/lock-9.0.min.js"></script>
+    <script src="auth0-electron.js"></script>
+    <script src="auth0-variables.js"></script>
+    
+    <script>
+      
+      var lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN);
+      var authenticated = false;
+
+      document.getElementById('login').addEventListener('click', function() {
+        lock.show(function(err, profile, token) {
+          if (err) {
+            // Error callback
+            console.error("Something went wrong: ", err);
+          } else {
+            // Success calback
+            // Save the profile and JWT.
+            localStorage.setItem('profile', JSON.stringify(profile));
+            localStorage.setItem('id_token', token);
+                       
+            document.getElementById('avatar').src = profile.picture;
+            document.getElementById('name').innerHTML = profile.nickname;
+            document.getElementById('email').innerHTML = profile.email;
+          }
+        });
+      });
+      
+      document.getElementById('logout').addEventListener('click', function() {
+        localStorage.removeItem('profile');
+        localStorage.removeItem('id_token');
+        document.getElementById('avatar').src = '';
+        document.getElementById('name').innerHTML = null;
+        document.getElementById('email').innerHTML = null;
+      });
+    </script>
+  </body>
+</html>
