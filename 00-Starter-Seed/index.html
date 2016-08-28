@@ -17,31 +17,31 @@
       <h3 id="email"></h3>
     </div>
 
-    <script src="https://cdn.auth0.com/js/lock-9.0.min.js"></script>
-    <script src="auth0-electron.js"></script>
+    <script src="https://cdn.auth0.com/js/lock/10.2/lock.min.js"></script>
     <script src="auth0-variables.js"></script>
     
     <script>
       
-      var lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN);
+      var lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, {
+        auth: {
+          redirect: false
+        }
+      });
       var authenticated = false;
 
       document.getElementById('login').addEventListener('click', function() {
-        lock.show(function(err, profile, token) {
-          if (err) {
-            // Error callback
-            console.error("Something went wrong: ", err);
-          } else {
-            // Success calback
-            // Save the profile and JWT.
-            localStorage.setItem('profile', JSON.stringify(profile));
-            localStorage.setItem('id_token', token);
-                       
-            document.getElementById('avatar').src = profile.picture;
-            document.getElementById('name').innerHTML = profile.nickname;
-            document.getElementById('email').innerHTML = profile.email;
-          }
+        lock.show();
+      });
+
+      lock.on('authenticated', (authResult) => {
+        localStorage.setItem('id_token', authResult.idToken);
+        lock.getProfile(authResult.idToken, (err, profile) => {
+          localStorage.setItem('profile', JSON.stringify(profile));
+          document.getElementById('avatar').src = profile.picture;
+          document.getElementById('name').innerHTML = profile.nickname;
+          document.getElementById('email').innerHTML = profile.email;
         });
+        lock.hide();
       });
       
       document.getElementById('logout').addEventListener('click', function() {
