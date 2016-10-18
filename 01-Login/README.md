@@ -1,6 +1,6 @@
 # Auth0 - Electron
 
-This sample shows you how to add authentication to your Electron app using Auth0.
+This sample project demonstrates how to add authentication to an Electron app using Auth0.
 
 ## Installation
 
@@ -12,7 +12,7 @@ npm install
 
 ## Set Your Credentials
 
-Create `auth0-variables.js` and set `AUTH0_CLIENT_ID` and `AUTH0_DOMAIN`:
+Rename `auth0-variables.js.example` to `auth0-variables.js` and set your Auth0 credentials:
 
 ```js
 var AUTH0_CLIENT_ID = 'AUTH0_CLIENT_ID';
