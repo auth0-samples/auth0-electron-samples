@@ -3,24 +3,55 @@
   <head>
     <meta charset="UTF-8">
     <title>Auth0 Electron</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  
+    <style>
+      .hidden {
+        display: none;
+      }
+
+      h3 {
+        margin-top: 0;
+      }
+
+      label {
+        margin: 5px 0;
+        color: #777;
+      }
+    </style>
   </head>
   <body>
-    
-    <h1>Auth0 Electron</h1>
-    
-    <button id="login">Login</button>
-    <button id="logout">Logout</button>
-    
-    <div id="profile">
-      <img id="avatar" style="width: 75px;border-radius:50%">
-      <h3 id="name"></h3>
-      <h3 id="email"></h3>
+
+    <div class="container">
+      <div class="jumbotron" style="margin-top: 15px;">
+        <h1>Auth0 Electron</h1>
+        
+        <button class="btn btn-primary btn-login">Login</button>
+        <button class="btn btn-primary btn-logout">Logout</button>
+
+      </div>
+      <div class="profile">
+        <div>
+          <img class="avatar" style="width: 75px;border-radius:50%">
+        </div>
+        <div class="profile-section hidden">
+          <label for="">Username</label>
+          <h3 class="name"></h3>
+          <label for="">Email</label>
+          <h3 class="email"></h3>
+        </div>
+      </div>
     </div>
+    
+    
 
     <script src="https://cdn.auth0.com/js/lock/10.7/lock.min.js"></script>
     <script src="auth0-variables.js"></script>
     
     <script>
+
+      $ = document.querySelector.bind(document);
       
       var lock = new Auth0Lock(AUTH0_CLIENT_ID, AUTH0_DOMAIN, {
         auth: {
@@ -28,9 +59,24 @@
           sso: false
         }
       });
-      var authenticated = false;
+      
+      var idToken = localStorage.getItem('id_token') || null;
+      var profile = JSON.parse(localStorage.getItem('profile')) || null;
 
-      document.getElementById('login').addEventListener('click', function() {
+      if (idToken && profile) {
+        $('.avatar').src = profile.picture;
+        $('.name').textContent = profile.nickname;
+        $('.email').textContent = profile.email;
+        $('.profile-section').classList.remove('hidden');
+        $('.btn-login').classList.add('hidden');
+        $('.btn-logout').classList.remove('hidden');
+      } else {
+        $('.profile-section').classList.add('hidden');
+        $('.btn-login').classList.remove('hidden');
+        $('.btn-logout').classList.add('hidden');
+      }
+
+      $('.btn-login').addEventListener('click', function() {
         lock.show();
       });
 
@@ -38,19 +84,25 @@
         localStorage.setItem('id_token', authResult.idToken);
         lock.getProfile(authResult.idToken, (err, profile) => {
           localStorage.setItem('profile', JSON.stringify(profile));
-          document.getElementById('avatar').src = profile.picture;
-          document.getElementById('name').innerHTML = profile.nickname;
-          document.getElementById('email').innerHTML = profile.email;
+          $('.profile-section').classList.remove('hidden');
+          $('.avatar').src = profile.picture;
+          $('.name').textContent = profile.nickname;
+          $('.email').textContent = profile.email;
+          $('.btn-login').classList.add('hidden');
+          $('.btn-logout').classList.remove('hidden');
         });
         lock.hide();
       });
       
-      document.getElementById('logout').addEventListener('click', function() {
+      $('.btn-logout').addEventListener('click', function() {
         localStorage.removeItem('profile');
         localStorage.removeItem('id_token');
-        document.getElementById('avatar').src = '';
-        document.getElementById('name').innerHTML = null;
-        document.getElementById('email').innerHTML = null;
+        $('.profile-section').classList.add('hidden');
+        $('.avatar').src = '';
+        $('.name').textContent = null;
+        $('.email').textContent = null;
+        $('.btn-login').classList.remove('hidden');
+        $('.btn-logout').classList.add('hidden');
       });
     </script>
   </body>
