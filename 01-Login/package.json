@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/auth0/auth0-electron#readme",
   "devDependencies": {
-    "electron": "^1.4.3"
+    "electron": "^1.4.13"
   }
 }
