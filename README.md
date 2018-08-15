@@ -1,6 +1,6 @@
 # Auth0 - Electron
 
-This sample project demonstrates how to add authentication to an Electron app using Auth0.
+**This example is DEPRECATED and is not working properly. We are working on a new version of it.**
 
 ## What is Auth0?
 
